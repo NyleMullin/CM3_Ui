@@ -16,16 +16,22 @@
       <a class="navbar-brand" href="/">
          <img src="/static/SM_LOGIC.svg" alt="Bootstrap" width="70" height="70" class="filter-white">
       </a>
-      <ul class="navbar-nav">
-         <li class="underline">
-         <a class="nav-link active" href="/">Overview</a>
-         </li>
-         <li class="underline">
-         <a class="nav-link" href="/admin">Admin</a>
-         </li>
-      </ul>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+         <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+         <ul class="navbar-nav">
+            <li class="underline">
+            <a class="nav-link active" href="/">Overview</a>
+            </li>
+            <li class="underline">
+            <a class="nav-link" href="/admin">Admin</a>
+            </li>
+         </ul>
+      </div>
    </div>
    <span class="nav-icon-widgets">
+      <span class="date-time" id="time"></span>
       <!-- data link strength, medium signal, 3 bars -->
       <div class="signal-icon medium">
          <div class="signal-bar"></div>
@@ -46,7 +52,7 @@
       </div>
       <!-- medium signal, 3 bars -->
       <i class="fa fa-battery-empty font-30px fa-battery-filling" aria-hidden="true" style="color:#9BA1A7">
-         <span id="result" style="width:calc(10% * 0.73)"></span>
+         <span id="result" style="width:calc(100% * 0.73)"></span>
       </i>
    </span>
 <!-- End of line -->
@@ -115,5 +121,6 @@
 <!-- Popper.js, then Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
+<script src="static/javascript.js"></script>
 </body>
 </html>
