@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <!-- Bootstrap -->
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+   <!-- Custom styling -->
+   <link rel="stylesheet" href='/static/style.css'>
+   <title>CM3 Base Station</title>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+<div class="container-fluid">
+   <div>
+      <a class="navbar-brand" href="/">
+         <img src="/static/SM_LOGIC.svg" alt="Bootstrap" width="70" height="70" class="filter-white">
+      </a>
+      <ul class="navbar-nav">
+         <li class="underline">
+         <a class="nav-link active" href="/">Overview</a>
+         </li>
+         <li class="underline">
+         <a class="nav-link" href="/admin">Admin</a>
+         </li>
+      </ul>
+   </div>
+   <span class="nav-icon-widgets">
+      <!-- data link strength, medium signal, 3 bars -->
+      <div class="signal-icon medium">
+         <div class="signal-bar"></div>
+         <div class="signal-bar"></div>
+         <div class="signal-bar"></div>
+         <div class="signal-bar"></div>
+      </div>
+      <!-- wifi signal strength -->
+      <div class="waveStrength-2">
+         <div class="wv4 wave">
+            <div class="wv3 wave">
+               <div class="wv2 wave">
+                  <div class="wv1 wave">
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- medium signal, 3 bars -->
+      <i class="fa fa-battery-empty font-30px fa-battery-filling" aria-hidden="true" style="color:#9BA1A7">
+         <span id="result" style="width:calc(10% * 0.73)"></span>
+      </i>
+   </span>
+<!-- End of line -->
+</div>
+</nav>
+
+<script>
+   setInterval(function(){
+  var x = Math.floor((Math.random() * 100) + 1);
+  document.getElementById("result").setAttribute("style", "width:calc("+x+"% * 0.73)");
+},1000);
+</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<div class="json_data">
+   {% if jsonfile %}
+      <script>
+            const jsonfile = JSON.parse({{jsonfile|tojson}});
+            console.log(jsonfile["system"]);
+            document.querySelector(".json_data").innerHTML = JSON.stringify(jsonfile["system"], null, 2);
+      </script>
+   {% endif %}
+</div>
+
+<div class="mt-5 p-3 bg-dark text-white text-center" id="footer">
+   <p>Version 1</p>
+ </div>
+
+<!-- Popper.js, then Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
+</body>
+</html>

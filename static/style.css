@@ -1,0 +1,239 @@
+:root{
+    background-color: #273886;
+}
+
+.filter-white{
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%);
+}
+
+.container-fluid {
+    margin: -15px;
+}
+
+.navbar {
+overflow: hidden;
+background-color: #333;
+}
+
+.navbar a {
+float: left;
+display: block;
+color: white;
+text-align: center;
+padding: 14px 20px;
+text-decoration: none;
+}
+
+.navbar a.right {
+float: right;
+}
+
+.navbar a:hover {
+color: #0074D9;
+text-underline-position: 10px;
+}
+
+.underline {
+    position: relative;
+}
+
+.underline::before {
+content: '';
+position: absolute;
+bottom: 0;
+right: 0;
+width: 0;
+height: 2px;
+background-color: #0074D9;
+transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+.underline:hover::before{
+    left: 0;
+    right: auto;
+    width: 100%;
+    }
+}
+
+.navbar-nav {
+    margin-top: 20px;
+}
+
+.nav-icon-widgets {
+    display: inline-flex;
+    margin-top: 20px;
+}
+
+body {
+    font-size: 15px;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #181C29;
+    color: #0B0C0E;
+    padding: 3px;
+    overflow: hidden; /* Hide scrollbars */
+}
+
+#main {
+    padding: 10px;
+    padding-left:  15px;
+    padding-right: 15px;
+    background-color: #273886;
+    border-radius: 5px 5px 5px 5px;
+    max-width: 700px;
+    margin-top: 200px;
+}
+
+h1 {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    font-size: 30px;
+}
+
+.card {
+    border: none;
+    box-shadow: inset 1px 1px rgb(255 255 255 / 20%), inset -1px -1px rgb(255 255 255 / 10%), 1px 3px 24px -1px rgb(0 0 0 / 15%);
+    background-color: transparent;
+    background-image: linear-gradient(125deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2) 70%);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    position: relative;
+    overflow: hidden;
+    color: #F7F9FC;
+    padding: 20px;
+    margin: 20px;
+    max-width: 650px;
+}
+
+.json_data {
+    border: none;
+    box-shadow: inset 1px 1px rgb(255 255 255 / 20%), inset -1px -1px rgb(255 255 255 / 10%), 1px 3px 24px -1px rgb(0 0 0 / 15%);
+    background-color: transparent;
+    background-image: linear-gradient(125deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2) 70%);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    position: relative;
+    overflow: hidden;
+    color: #F7F9FC;
+    padding: 20px;
+    margin: 20px;
+    max-width: 650px;
+}
+
+#footer {
+    color: #9BA1A7 !important;
+}
+
+/* Battery status indicator */
+.font-30px{font-size: 30px!important;}
+
+.fa-battery-filling{
+  position: relative;
+}
+.fa-battery-filling span{
+  position: absolute;
+  background: linear-gradient(125deg, #0099ff 0%, #0000ff 100%);
+  top: 12%;
+  height: 21%;
+  left: 10%;
+  border-radius: 2px;
+  transition: 250ms ease;
+}
+.fa-battery-filling [style="width:calc(1% * 0.73)"],
+.fa-battery-filling [style="width:calc(2% * 0.73)"], 
+.fa-battery-filling [style="width:calc(3% * 0.73)"], 
+.fa-battery-filling [style="width:calc(4% * 0.73)"], 
+.fa-battery-filling [style="width:calc(5% * 0.73)"], 
+.fa-battery-filling [style="width:calc(6% * 0.73)"], 
+.fa-battery-filling [style="width:calc(7% * 0.73)"], 
+.fa-battery-filling [style="width:calc(8% * 0.73)"], 
+.fa-battery-filling [style="width:calc(9% * 0.73)"], 
+.fa-battery-filling [style="width:calc(10% * 0.73)"],
+.fa-battery-filling [style="width:calc(11% * 0.73)"],
+.fa-battery-filling [style="width:calc(12% * 0.73)"],
+.fa-battery-filling [style="width:calc(13% * 0.73)"],
+.fa-battery-filling [style="width:calc(14% * 0.73)"],
+.fa-battery-filling [style="width:calc(15% * 0.73)"],
+.fa-battery-filling [style="width:calc(16% * 0.73)"],
+.fa-battery-filling [style="width:calc(17% * 0.73)"],
+.fa-battery-filling [style="width:calc(18% * 0.73)"],
+.fa-battery-filling [style="width:calc(19% * 0.73)"],
+.fa-battery-filling [style="width:calc(20% * 0.73)"]{
+    background: linear-gradient(125deg, #ff0000 0%, #ff0000 100%);
+}
+.fa-battery-filling [style="width:calc(90% * 0.73)"],
+.fa-battery-filling [style="width:calc(91% * 0.73)"],
+.fa-battery-filling [style="width:calc(92% * 0.73)"],
+.fa-battery-filling [style="width:calc(93% * 0.73)"],
+.fa-battery-filling [style="width:calc(94% * 0.73)"],
+.fa-battery-filling [style="width:calc(95% * 0.73)"],
+.fa-battery-filling [style="width:calc(96% * 0.73)"],
+.fa-battery-filling [style="width:calc(97% * 0.73)"],
+.fa-battery-filling [style="width:calc(98% * 0.73)"],
+.fa-battery-filling [style="width:calc(99% * 0.73)"],
+.fa-battery-filling [style="width:calc(100% * 0.73)"]{
+    background: linear-gradient(125deg, #00ff00 0%, #66ff99 100%);
+}
+
+/* Wifi signal strength*/
+.wave {
+	display: inline-block;
+	border: 4px solid transparent;
+	border-top-color: #0074D9;
+	border-radius: 50%;
+	border-style: solid;
+    margin: 4px;
+}
+
+.waveStrength-3 .wv4.wave,
+.waveStrength-2 .wv4.wave,
+.waveStrength-2 .wv3.wave,
+.waveStrength-1 .wv4.wave,
+.waveStrength-1 .wv3.wave,
+.waveStrength-1 .wv2.wave {
+	border-top-color: #9BA1A7;
+}
+
+/* Data link signal strength*/
+.signal-icon {
+    height: 25px;
+    width: 25px;
+    /* To show you the power of flexbox! */
+    display: flex;
+    /* Bars should be placed left to right */
+    flex-direction: row;
+    /* Evenly space the bars with space in between */
+    justify-content: space-between;
+    /* Sink the bars to the bottom, so they go up in steps */
+    align-items: baseline;
+}
+.signal-icon .signal-bar {
+    /* 4 + 3 + 4 + 3 + 4 = 18px (as set above)
+    4px per bar and 3px margins between */
+    width: 4px;
+    /* All bars faded by default */
+    /* opacity: 30%; */
+    /* Choose a color */
+    background: #9BA1A7;
+}
+
+/* 3 different heights for 3 different bars */
+.signal-icon .signal-bar:nth-child(1) { height: 40%; }
+.signal-icon .signal-bar:nth-child(2) { height: 60%; }
+.signal-icon .signal-bar:nth-child(3) { height: 80%; }
+.signal-icon .signal-bar:nth-child(4) { height: 100%; }
+
+/* Emphasize different bars depending on
+weak/medium/strong classes */
+.signal-icon.weak .signal-bar:nth-child(1),
+.signal-icon.low .signal-bar:nth-child(1),
+.signal-icon.low .signal-bar:nth-child(2),
+.signal-icon.medium .signal-bar:nth-child(1),
+.signal-icon.medium .signal-bar:nth-child(2),
+.signal-icon.medium .signal-bar:nth-child(3),
+.signal-icon.strong .signal-bar:nth-child(1),
+.signal-icon.strong .signal-bar:nth-child(2),
+.signal-icon.strong .signal-bar:nth-child(3),
+.signal-icon.strong .signal-bar:nth-child(4)
+{ opacity: 100%;
+  background: #0074D9; 
+}
