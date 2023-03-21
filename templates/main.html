@@ -62,7 +62,7 @@
 </nav>
 
 <div class="parent">
-   <div class="json_data_system div1" id="json_data">
+   <pre class="json_data_system div1" id="json_data">
       {% if jsonfile %}
          <script>
                const jsonfile_system = JSON.parse({{jsonfile|tojson}});
@@ -70,9 +70,9 @@
                document.querySelector(".json_data_system").innerHTML = JSON.stringify(jsonfile_system["system"], null, 2);
          </script>
       {% endif %}
-   </div>
+   </pre>
 
-   <div class="json_data_network div2" id="json_data">
+   <pre class="json_data_network div2" id="json_data">
       {% if jsonfile %}
          <script>
                const jsonfile_network = JSON.parse({{jsonfile|tojson}});
@@ -80,9 +80,9 @@
                document.querySelector(".json_data_network").innerHTML = JSON.stringify(jsonfile_network["network"], null, 2);
          </script>
       {% endif %}
-   </div>
+   </pre>
 
-   <div class="json_data_link div3" id="json_data">
+   <pre class="json_data_link div3" id="json_data">
       {% if jsonfile %}
          <script>
                const jsonfile_link = JSON.parse({{jsonfile|tojson}});
@@ -90,9 +90,9 @@
                document.querySelector(".json_data_link").innerHTML = JSON.stringify(jsonfile_link["link"], null, 2);
          </script>
       {% endif %}
-   </div>
+   </pre>
 
-   <div class="json_data_battery div4" id="json_data">
+   <pre class="json_data_battery div4" id="json_data">
       {% if jsonfile %}
          <script>
                const jsonfile_battery = JSON.parse({{jsonfile|tojson}});
@@ -100,9 +100,9 @@
                document.querySelector(".json_data_battery").innerHTML = JSON.stringify(jsonfile_battery["battery"], null, 2);
          </script>
       {% endif %}
-   </div>
+   </pre>
 
-   <div class="json_data_mapping div5" id="json_data">
+   <pre class="json_data_mapping div5" id="json_data">
       {% if jsonfile %}
          <script>
                const jsonfile_mapping = JSON.parse({{jsonfile|tojson}});
@@ -110,9 +110,9 @@
                document.querySelector(".json_data_mapping").innerHTML = JSON.stringify(jsonfile_mapping["mapping"], null, 2);
          </script>
       {% endif %}
-   </div>
+   </pre>
 
-   <div class="json_data_systemlog div6" id="json_data">
+   <pre class="json_data_systemlog div6" id="json_data">
       {% if jsonfile %}
          <script>
                const jsonfile_systemlog = JSON.parse({{jsonfile|tojson}});
@@ -120,7 +120,7 @@
                document.querySelector(".json_data_systemlog").innerHTML = JSON.stringify(jsonfile_systemlog["systemlog"], null, 2);
          </script>
       {% endif %}
-   </div>
+   </pre>
 </div>
 
 <div class="mt-5 p-3 bg-dark text-white text-center" id="footer">

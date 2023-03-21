@@ -83,7 +83,7 @@
       </form>
 </div>
 
-<div class="json_data">
+<pre class="json_data" id="json_data">
    {% if jsonfile %}
       <script>
             const jsonfile = JSON.parse({{jsonfile|tojson}});
@@ -91,7 +91,7 @@
             document.querySelector(".json_data").innerHTML = JSON.stringify(jsonfile, null, 2);
       </script>
    {% endif %}
-</div>
+</pre>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type=text/javascript>

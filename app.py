@@ -8,7 +8,9 @@ Complete project details: https://randomnerdtutorials.com
 '''
 
 import os
-from datetime import date
+import threading
+from datetime import date, datetime
+import time
 import RPi.GPIO as GPIO
 from flask import Flask, render_template, request, url_for, json
 app = Flask(__name__)
@@ -35,6 +37,11 @@ def read_json_file():
             json_object = json.load(openfile)
    # return render_template('main.html', jsonfile=json.dumps(json_object["system"]))
    return json.dumps(json_object)
+
+def background_task():
+    while True:
+        print(datetime.now())
+        time.sleep(1)
 
 @app.route("/")
 def home():
@@ -108,4 +115,7 @@ def background_process():
 
 
 if __name__ == "__main__":
+   thread = threading.Thread(target=background_task)
+   thread.daemon = True
+   thread.start()
    app.run(host='172.16.136.87', port=8080, debug=True)
