@@ -38,11 +38,6 @@ def read_json_file():
    # return render_template('main.html', jsonfile=json.dumps(json_object["system"]))
    return json.dumps(json_object)
 
-def background_task():
-    while True:
-        print(datetime.now())
-        time.sleep(1)
-
 @app.route("/")
 def home():
    return render_template('main.html', jsonfile=read_json_file())
@@ -88,6 +83,17 @@ def action(changePin, action):
 
    return render_template('admin.html', **templateData, jsonfile=read_json_file())
 
+@app.route('/admin', methods=['POST'])
+def my_form_post():
+   text = request.form['text']
+   processed_text = text.upper()
+   print(processed_text)
+   # Along with the pin dictionary, put the message into the template data dictionary:
+   templateData = {
+      'pins' : pins
+   }
+   return render_template('admin.html', **templateData, jsonfile=read_json_file())
+
 @app.route("/admin", methods=['GET', 'POST'])
 def index():
    if request.method == 'POST':
@@ -115,7 +121,5 @@ def background_process():
 
 
 if __name__ == "__main__":
-   thread = threading.Thread(target=background_task)
-   thread.daemon = True
-   thread.start()
+
    app.run(host='172.16.136.87', port=8080, debug=True)

@@ -24,7 +24,7 @@
       <div class="collapse navbar-collapse" id="navbarNav">
          <ul class="navbar-nav">
             <li class="underline">
-            <a class="nav-link active" href="/">Overview</a>
+            <a class="nav-link active" aria-current="page" href="/">Overview</a>
             </li>
             <li class="underline">
             <a class="nav-link" href="/admin">Admin</a>
@@ -35,14 +35,14 @@
    <span class="nav-icon-widgets">
       <span class="date-time" id="time"></span>
       <!-- data link strength, medium signal, 3 bars -->
-      <div class="signal-icon medium">
+      <div id="drone-link-icon">
          <div class="signal-bar"></div>
          <div class="signal-bar"></div>
          <div class="signal-bar"></div>
          <div class="signal-bar"></div>
       </div>
       <!-- wifi signal strength -->
-      <div class="waveStrength-2">
+      <div id="wifi-signal-strength">
          <div class="wv4 wave">
             <div class="wv3 wave">
                <div class="wv2 wave">
@@ -62,65 +62,83 @@
 </nav>
 
 <div class="parent">
-   <pre class="json_data_system div1" id="json_data">
-      {% if jsonfile %}
-         <script>
-               const jsonfile_system = JSON.parse({{jsonfile|tojson}});
-               console.log(jsonfile_system["system"]);
-               document.querySelector(".json_data_system").innerHTML = JSON.stringify(jsonfile_system["system"], null, 2);
-         </script>
-      {% endif %}
-   </pre>
+   <div id="json_data">
+      <h1>System</h1>
+      <pre class="json_data_system div1">
+         {% if jsonfile %}
+            <script>
+                  const jsonfile_system = JSON.parse({{jsonfile|tojson}});
+                  console.log(jsonfile_system["system"]);
+                  document.querySelector(".json_data_system").innerHTML = JSON.stringify(jsonfile_system["system"], null, 2);
+            </script>
+         {% endif %}
+      </pre>
+   </div>
 
-   <pre class="json_data_network div2" id="json_data">
-      {% if jsonfile %}
-         <script>
-               const jsonfile_network = JSON.parse({{jsonfile|tojson}});
-               console.log(jsonfile_network["network"]);
-               document.querySelector(".json_data_network").innerHTML = JSON.stringify(jsonfile_network["network"], null, 2);
-         </script>
-      {% endif %}
-   </pre>
+   <div id="json_data">
+      <h1>Network</h1>
+      <pre class="json_data_network div2" id="pre_json">
+         {% if jsonfile %}
+            <script>
+                  const jsonfile_network = JSON.parse({{jsonfile|tojson}});
+                  console.log(jsonfile_network["network"]);
+                  document.querySelector(".json_data_network").innerHTML = JSON.stringify(jsonfile_network["network"], null, 2);
+            </script>
+         {% endif %}
+      </pre>
+   </div>
 
-   <pre class="json_data_link div3" id="json_data">
-      {% if jsonfile %}
-         <script>
-               const jsonfile_link = JSON.parse({{jsonfile|tojson}});
-               console.log(jsonfile_link["link"]);
-               document.querySelector(".json_data_link").innerHTML = JSON.stringify(jsonfile_link["link"], null, 2);
-         </script>
-      {% endif %}
-   </pre>
+   <div id="json_data">
+      <h1>Link</h1>
+      <pre class="json_data_link div3">
+         {% if jsonfile %}
+            <script>
+                  const jsonfile_link = JSON.parse({{jsonfile|tojson}});
+                  console.log(jsonfile_link["link"]);
+                  document.querySelector(".json_data_link").innerHTML = JSON.stringify(jsonfile_link["link"], null, 2);
+            </script>
+         {% endif %}
+      </pre>
+   </div>
 
-   <pre class="json_data_battery div4" id="json_data">
-      {% if jsonfile %}
-         <script>
-               const jsonfile_battery = JSON.parse({{jsonfile|tojson}});
-               console.log(jsonfile_battery["battery"]);
-               document.querySelector(".json_data_battery").innerHTML = JSON.stringify(jsonfile_battery["battery"], null, 2);
-         </script>
-      {% endif %}
-   </pre>
+   <div id="json_data">
+      <h1>Battery</h1>
+      <pre class="json_data_battery div4">
+         {% if jsonfile %}
+            <script>
+                  const jsonfile_battery = JSON.parse({{jsonfile|tojson}});
+                  console.log(jsonfile_battery["battery"]);
+                  document.querySelector(".json_data_battery").innerHTML = JSON.stringify(jsonfile_battery["battery"], null, 2);
+            </script>
+         {% endif %}
+      </pre>
+   </div>
 
-   <pre class="json_data_mapping div5" id="json_data">
-      {% if jsonfile %}
-         <script>
-               const jsonfile_mapping = JSON.parse({{jsonfile|tojson}});
-               console.log(jsonfile_mapping["mapping"]);
-               document.querySelector(".json_data_mapping").innerHTML = JSON.stringify(jsonfile_mapping["mapping"], null, 2);
-         </script>
-      {% endif %}
-   </pre>
+   <div id="json_data">
+      <h1>Mapping</h1>
+      <pre class="json_data_mapping div5">
+         {% if jsonfile %}
+            <script>
+                  const jsonfile_mapping = JSON.parse({{jsonfile|tojson}});
+                  console.log(jsonfile_mapping["mapping"]);
+                  document.querySelector(".json_data_mapping").innerHTML = JSON.stringify(jsonfile_mapping["mapping"], null, 2);
+            </script>
+         {% endif %}
+      </pre>
+   </div>
 
-   <pre class="json_data_systemlog div6" id="json_data">
-      {% if jsonfile %}
-         <script>
-               const jsonfile_systemlog = JSON.parse({{jsonfile|tojson}});
-               console.log(jsonfile_systemlog["systemlog"]);
-               document.querySelector(".json_data_systemlog").innerHTML = JSON.stringify(jsonfile_systemlog["systemlog"], null, 2);
-         </script>
-      {% endif %}
-   </pre>
+   <div id="json_data">
+      <h1>SystemLog</h1>
+      <pre class="json_data_systemlog div6">
+         {% if jsonfile %}
+            <script>
+                  const jsonfile_systemlog = JSON.parse({{jsonfile|tojson}});
+                  console.log(jsonfile_systemlog["systemlog"]);
+                  document.querySelector(".json_data_systemlog").innerHTML = JSON.stringify(jsonfile_systemlog["systemlog"], null, 2);
+            </script>
+         {% endif %}
+      </pre>
+   </div>
 </div>
 
 <div class="mt-5 p-3 bg-dark text-white text-center" id="footer">
