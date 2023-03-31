@@ -6,6 +6,8 @@
    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
    <!-- Custom styling -->
    <link rel="stylesheet" href='/static/style.css'>
+   <!-- FontAwesome -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
    <title>CM3 Base Station</title>
 </head>
 
@@ -27,20 +29,23 @@
             <li class="underline">
             <a class="nav-link active" aria-current="page" href="/admin">Admin</a>
             </li>
+            <li class="underline">
+            <a class="nav-link" href="/admin2">Admin2</a>
+            </li>
          </ul>
       </div>
    </div>
    <span class="nav-icon-widgets">
       <span class="date-time" id="time"></span>
       <!-- data link strength, medium signal, 3 bars -->
-      <div class="signal-icon medium">
+      <div id="drone-link-icon">
          <div class="signal-bar"></div>
          <div class="signal-bar"></div>
          <div class="signal-bar"></div>
          <div class="signal-bar"></div>
       </div>
       <!-- wifi signal strength -->
-      <div class="waveStrength-2">
+      <div id="wifi-signal-strength">
          <div class="wv4 wave">
             <div class="wv3 wave">
                <div class="wv2 wave">
@@ -52,14 +57,12 @@
       </div>
       <!-- medium signal, 3 bars -->
       <i class="fa fa-battery-empty font-30px fa-battery-filling" aria-hidden="true" style="color:#9BA1A7">
-         <span id="result" style="width:calc(100% * 0.73)"></span>
+         <span id="result" style="width:calc(10% * 0.73)"></span>
       </i>
    </span>
 <!-- End of line -->
 </div>
 </nav>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <div class="card">
    <h1>LED Control</h1>
@@ -111,11 +114,11 @@
       <form>
             <a href=# id=test><button class='btn btn-primary'>Test</button></a>
       </form>
-
 </div>
 
 <div id="input-field">
    <form method="POST">
+      <label for="input-field">Email address</label>
       <input name="text" class="form-control">
       <button type="submit" class="btn btn-primary">Submit</button>
    </form>

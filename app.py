@@ -13,7 +13,11 @@ from datetime import date, datetime
 import time
 import RPi.GPIO as GPIO
 from flask import Flask, render_template, request, url_for, json
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired
 app = Flask(__name__)
+app.config['SECRET_KEY'] = "root"
 
 GPIO.setmode(GPIO.BCM)
 
@@ -37,6 +41,15 @@ def read_json_file():
             json_object = json.load(openfile)
    # return render_template('main.html', jsonfile=json.dumps(json_object["system"]))
    return json.dumps(json_object)
+
+def printloadsofstuff():
+   i = 0
+   while i < 5:
+      i += 1
+      print("test")
+
+def changeWifiChannel(channel):
+   print("changing wifi channel from '{}' to", channel)
 
 @app.route("/")
 def home():
@@ -83,11 +96,51 @@ def action(changePin, action):
 
    return render_template('admin.html', **templateData, jsonfile=read_json_file())
 
+# Create a class form
+class NamerForm(FlaskForm):
+   name_input = StringField("What's your name", validators=[DataRequired()])
+   submit = SubmitField("Submit")
+
+# Create a class form
+class WifiForm(FlaskForm):
+   wifi_input = StringField("Wifi Channel", validators=[DataRequired()])
+   submit = SubmitField("Submit")
+
+# Create a name page
+@app.route('/admin2', methods=['GET', 'POST'])
+def name():
+   name_input = None
+   name_form = NamerForm()
+   wifi_input = None
+   wifi_form = WifiForm()
+
+   # validate form
+   if name_form.validate_on_submit():
+      name_input = name_form.name_input.data
+      name_form.name_input.data = ''
+      printloadsofstuff()
+   
+   if wifi_form.validate_on_submit():
+      wifi_input = wifi_form.wifi_input.data
+      wifi_form.wifi_input.data = ''
+      changeWifiChannel(wifi_input)
+   
+   return render_template('admin2.html', jsonfile=read_json_file(),
+                        name_form=name_form,
+                        wifi_form=wifi_form,
+                        name_input=name_input,
+                        wifi_input=wifi_input)
+
+
 @app.route('/admin', methods=['POST'])
-def my_form_post():
-   text = request.form['text']
-   processed_text = text.upper()
-   print(processed_text)
+def form_post():
+   if request.method == 'POST':
+      text = request.form['text']
+      print(request.form)
+      processed_text = text.upper()
+      print(processed_text)
+      printloadsofstuff()
+   
    # Along with the pin dictionary, put the message into the template data dictionary:
    templateData = {
       'pins' : pins
@@ -117,7 +170,7 @@ def index():
 #background process happening without any refreshing
 @app.route('/background_process_test')
 def background_process():
-   return "<p>Hello</p>!"
+   return "<p>Hello!</p>"
 
 
 if __name__ == "__main__":

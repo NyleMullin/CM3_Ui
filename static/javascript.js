@@ -24,7 +24,7 @@ setInterval(function(){
 
   i_drone++;
 
-  if (i_drone == 4){
+  if (i_drone === 4){
     i_drone = 0;
   }
 },1000);
@@ -39,7 +39,7 @@ setInterval(function(){
 
   i_wifi++;
   
-  if (i_wifi == 4){
+  if (i_wifi === 4){
     i_wifi = 0;
   }
 },1000);
