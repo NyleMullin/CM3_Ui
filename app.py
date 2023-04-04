@@ -9,6 +9,7 @@ Complete project details: https://randomnerdtutorials.com
 
 import os
 absolute_path = os.path.dirname(__file__)
+import fileinput
 import threading
 import subprocess
 from datetime import date, datetime
@@ -87,24 +88,54 @@ def background_process():
 #background process happening without any refreshing
 @app.route('/wifiMode')
 def bp_wifiMode():
-   # change channel from 11 - 36
+   # Switch channel from 11 - 36 or vice verse
    hostapd_path = "/etc/hostapd/hostapd.conf"
-   with open(hostapd_path, 'r+') as default_config:
-      for line in default_config:
+   with open(hostapd_path, 'r+') as default_conf:
+      for line in default_conf:
+         if line.lstrip().startswith('channel='):
+            channel = line
+            channel = line.rsplit('=', 1)[1]
+         if line.lstrip().startswith('hw_mode='):
+            hw_mode = line
+   with open(hostapd_path, 'r+') as default_conf:
+      for line in default_conf:
          if line.lstrip().startswith('channel='):
             channel = line.rsplit('=', 1)[1]
+            print(channel, "found wifi channel")
             if channel <= "14":
                print("WiFi is in 2.4 ghz mode changing to 5ghz")
-               default_config.write('channel={}\n'.format(36))
-            else:
+               with fileinput.input(hostapd_path, inplace=True) as default_conf:
+                  for linefile in default_conf:
+                     op_line = linefile.replace(channel, '36\n')
+                     print(op_line, end='')
+            if channel >= "14":
                print("Wifi is in 5ghz mode changing to 2.4ghz")
-               default_config.write('channel={}\n'.format(11))
+               with fileinput.input(hostapd_path, inplace=True) as default_conf:
+                  for linefile in default_conf:
+                     op_line = linefile.replace(channel, '11\n')
+                     print(op_line, end='')
+         elif line.lstrip().startswith('hw_mode='):
+            hw_mode = line
+            hw_mode = hw_mode.rstrip()
+            print("wifi is currently in hardware mode: ", len(hw_mode))
+            if hw_mode == "hw_mode=g" and channel <= "14":
+               print("Channel is in 2.4ghz changin to 5ghz")
+               with fileinput.input(hostapd_path, inplace=True) as default_conf:
+                  for linefile in default_conf:
+                     op_line = linefile.replace(hw_mode, 'hw_mode=a')
+                     print(op_line, end='')
+            if hw_mode == "hw_mode=a" and channel >= "14":
+               print("Channel is in 2.4ghz changin to 5ghz")
+               with fileinput.input(hostapd_path, inplace=True) as default_conf:
+                  for linefile in default_conf:
+                     op_line = linefile.replace(hw_mode, 'hw_mode=g')
+                     print(op_line, end='')
+   print(line, '1\n')
 
-   # subprocess.run(["sudo", "ip", "link", "set", "wlan0", "down"])
-   # subprocess.Popen(("/etc/init.d/hostapd", "restart"), shell = False).wait()
-   # subprocess.run(["cm3"])
-   # subprocess.run(["sudo", "ip", "link", "set", "wlan0", "up"])
-   # time.sleep(5)
+   subprocess.run(["sudo", "ip", "link", "set", "wlan0", "down"])
+   subprocess.Popen(("/etc/init.d/hostapd", "restart"), shell = False).wait()
+   subprocess.run(["sudo", "ip", "link", "set", "wlan0", "up"])
+   time.sleep(5)
    return str(line)
 
 #background process happening without any refreshing
@@ -117,7 +148,6 @@ def bp_wifiDhcp():
 def bp_wifiRestart():
    subprocess.run(["sudo", "ip", "link", "set", "wlan0", "down"])
    subprocess.Popen(("/etc/init.d/hostapd", "restart"), shell = False).wait()
-   subprocess.run(["cm3"])
    subprocess.run(["sudo", "ip", "link", "set", "wlan0", "up"])
    time.sleep(5)
 
