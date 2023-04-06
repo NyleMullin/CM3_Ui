@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../system"
+		},
+		{
+			"path": "../../Adafruit_CircuitPython_SSD1306"
+		}
+	],
+	"settings": {}
+}

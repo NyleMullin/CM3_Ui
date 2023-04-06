@@ -20,22 +20,79 @@ import os
 import threading
 from datetime import date, datetime
 import time
-import RPi.GPIO as GPIO
 from flask import Flask, render_template, request, url_for, json
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired
 app = Flask(__name__)
 
-GPIO.setmode(GPIO.BCM)
+# Create a class form for WiFi channel
+class WifiChannelForm(FlaskForm):
+   wifi_input_channel = StringField("Wifi Channel", validators=[DataRequired()])
+   submit = SubmitField("Submit")
 
-# Create a dictionary called pins to store the pin number, name, and pin state:
-# pins = {
-#    23 : {'name' : 'GPIO 23', 'state' : GPIO.LOW},
-#    24 : {'name' : 'GPIO 24', 'state' : GPIO.LOW}
-#    }
+# Create a class form for WiFi static ip
+class WifiStaticIp(FlaskForm):
+   wifi_input_ip = StringField("Set Static ip of basestation", validators=[DataRequired()])
+   submit = SubmitField("Submit")
 
-# # Set each pin as an output and make it low:
-# for pin in pins:
-#    GPIO.setup(pin, GPIO.OUT)
-#    GPIO.output(pin, GPIO.LOW)
+TYPES = {
+    'A' : 'Tac_G_TRX',
+    'C' : 'nesie2_controller',
+    'I' : 'Tac_G_Controller',
+    'T' : 'nesie2_pa_tx',
+    'U' : 'Covert',    # C/U-NESIE
+    'B' : 'Tac_A_TRX/Tac_U',
+    'R' : 'REDSTREAK',
+    'F' : 'flight_unit',
+    'K' : 'Tac_A_Controller',
+    '' : 'Other'
+}
+
+KEYS = ('name', 'mac', 'type', 'ID', 'group')
+
+def unit_search():
+    results = dict()
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+          
+            sock.settimeout(2)
+            sock.bind(('0.0.0.0', 30303))                                    
+            print('Broadcasting on 255.255.255.255, port 30303 to find NESIE devices.')
+            sock.sendto(b'Discovery: Python', ('255.255.255.255', 30303))
+            while True:
+                data, address = sock.recvfrom(1024)
+                values = data.decode('utf8').split()
+                
+                if len(values) >= 3 and values != ['Discovery:','Python']:    # this should catch CM/MCM/ACM/S/T/U-NESIEs
+                    found = TYPES.get(values[2], None)
+                    
+                    if found is not None:
+                        values.insert(2, found)
+                        device = dict(zip(KEYS, values))
+                        device['mac'] = ':'.join(device['mac'].lower().split('-'))
+                        results[address[0]] = device
+    except socket.timeout as e:
+        print(e)
+        pass
+
+    return results
+
+def gui_data_import(*eth_filter):
+
+    headings = ['IP Address','Name','Mac Address','Type', 'ID','Group']
+    eth_list = unit_search()
+    gui_eth_df = pd.DataFrame.from_dict(eth_list, orient='index')
+    gui_eth_df_filt = gui_eth_df.sort_values('name')
+
+    if eth_filter[0] != '':
+        gui_eth_df_filt = gui_eth_df.loc[gui_eth_df['ID'] == eth_filter[0]]
+
+    gui_eth_df_filt = gui_eth_df_filt.rename_axis('ip_adress').reset_index()
+    gui_eth_list = gui_eth_df_filt.values.tolist()
+
+    return gui_eth_df_filt
 
 # Kill variable for the loop thread
 exit_now = False
@@ -212,6 +269,7 @@ def run_oled(lock):
 
    # Clear display.
    disp.fill(0)
+   disp.write_cmd(0x2E)
    disp.show()
 
    # Create blank image for drawing.
@@ -297,70 +355,56 @@ def run_oled(lock):
       disp.fill(0)
       disp.show()
 
+def read_json_file():
+   relative_path = "../system/state.json"
+   full_path = os.path.join(absolute_path, relative_path)
+   with open(full_path, 'r') as openfile:
+            # Reading from json file
+            json_object = json.load(openfile)
+   # return render_template('main.html', jsonfile=json.dumps(json_object["system"]))
+   return json.dumps(json_object)
+
+def printloadsofstuff(): # Test function
+   i = 0
+   while i < 5:
+      i += 1
+      print("test")
+
+def changeWifiChannel(channel): # Finish
+   print("changing wifi channel from '{}' to", channel)
+
+def changeWifiIp(wifi_ip): # Finish
+   print("Setting basestation to a static ip of: ", wifi_ip)
+
 @app.route("/")
 def home():
-   return render_template('main.html', jsonfile=read_system_state())
+   return render_template('main.html', jsonfile=read_json_file())
 
 @app.route("/admin")
 def main():
-   # For each pin, read the pin state and store it in the pins dictionary:
-   for pin in pins:
-      pins[pin]['state'] = GPIO.input(pin)
-   # Put the pin dictionary into the template data dictionary:
-   templateData = {
-      'pins' : pins
-      }
-   # Pass the template data into the template main.html and return it to the user
+   wifi_input_channel = None
+   wifi_form_channel = WifiChannelForm()
+   wifi_input_ip = None
+   wifi_form_ip = WifiStaticIp()
 
-   return render_template('admin.html', **templateData, jsonfile=read_system_state())
+   gui_eth_df_filt = gui_data_import('B')
+   
+   if wifi_form_channel.validate_on_submit():
+      wifi_input_channel = wifi_form_channel.wifi_input_channel.data
+      wifi_form_channel.wifi_input_channel.data = ''
+      changeWifiChannel(wifi_input_channel)
 
-# The function below is executed when someone requests a URL with the pin number and action in it:
-@app.route("/<changePin>/<action>")
-def action(changePin, action):
-   # Convert the pin from the URL into an integer:
-   changePin = int(changePin)
-   # Get the device name for the pin being changed:
-   deviceName = pins[changePin]['name']
-   # If the action part of the URL is "on," execute the code indented below:
-   if action == "on":
-      # Set the pin high:
-      GPIO.output(changePin, GPIO.HIGH)
-      # Save the status message to be passed into the template:
-      message = "Turned " + deviceName + " on."
-   if action == "off":
-      GPIO.output(changePin, GPIO.LOW)
-      message = "Turned " + deviceName + " off."
-
-   # For each pin, read the pin state and store it in the pins dictionary:
-   for pin in pins:
-      pins[pin]['state'] = GPIO.input(pin)
-
-   # Along with the pin dictionary, put the message into the template data dictionary:
-   templateData = {
-      'pins' : pins
-   }
-
-   return render_template('admin.html', **templateData, jsonfile=read_system_state())
-
-@app.route("/admin", methods=['GET', 'POST'])
-def index():
-   if request.method == 'POST':
-
-      if request.form.get('action1') == 'VALUE1':
-         print('Value 1 has been pressed')
-      elif  request.form.get('action2') == 'VALUE2':
-         pass # do something else
-      else:
-         pass # unknown
-   elif request.method == 'GET':
-      return render_template('admin.html', form=form)
-
-   # Along with the pin dictionary, put the message into the template data dictionary:
-   templateData = {
-      'pins' : pins
-   }
-    
-   return render_template('main.html', **templateData, jsonfile=read_system_state())
+   if wifi_form_ip.validate_on_submit():
+      wifi_input_ip = wifi_form_ip.wifi_input_ip.data
+      wifi_form_ip.wifi_input_ip.data = ''
+      changeWifiIp(wifi_input_ip)
+   
+   return render_template('admin.html', jsonfile=read_json_file(),
+                        wifi_form_channel=wifi_form_channel,
+                        wifi_input_channel=wifi_input_channel,
+                        wifi_form_ip=wifi_form_ip,
+                        wifi_input_ip=wifi_input_ip,
+                        tables=[gui_eth_df_filt.to_html(classes='data', header="true")])
 
 #background process happening without any refreshing
 @app.route('/background_process_test')
@@ -382,7 +426,7 @@ if __name__ == "__main__":
    t1.start()
    t2.start()
 
-   app.run(host='172.16.136.87', port=8080, debug=False)
+   app.run(host='192.168.168.199', port=8080, debug=False)
 
    print("flask exit")
    exit_now = True

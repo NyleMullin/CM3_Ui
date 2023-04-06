@@ -1,15 +1,8 @@
-'''
-
-Adapted excerpt from Getting Started with Raspberry Pi by Matt Richardson
-
-Modified by Rui Santos
-Complete project details: https://randomnerdtutorials.com
-
-'''
-
 import os
 absolute_path = os.path.dirname(__file__)
 import fileinput
+import socket
+import pandas as pd
 import threading
 import subprocess
 from datetime import date, datetime
@@ -31,6 +24,64 @@ class WifiChannelForm(FlaskForm):
 class WifiStaticIp(FlaskForm):
    wifi_input_ip = StringField("Set Static ip of basestation", validators=[DataRequired()])
    submit = SubmitField("Submit")
+
+TYPES = {
+    'A' : 'Tac_G_TRX',
+    'C' : 'nesie2_controller',
+    'I' : 'Tac_G_Controller',
+    'T' : 'nesie2_pa_tx',
+    'U' : 'Covert',    # C/U-NESIE
+    'B' : 'Tac_A_TRX/Tac_U',
+    'R' : 'REDSTREAK',
+    'F' : 'flight_unit',
+    'K' : 'Tac_A_Controller',
+    '' : 'Other'
+}
+
+KEYS = ('name', 'mac', 'type', 'ID', 'group')
+
+def unit_search():
+    results = dict()
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+          
+            sock.settimeout(2)
+            sock.bind(('0.0.0.0', 30303))                                    
+            print('Broadcasting on 255.255.255.255, port 30303 to find NESIE devices.')
+            sock.sendto(b'Discovery: Python', ('255.255.255.255', 30303))
+            while True:
+                data, address = sock.recvfrom(1024)
+                values = data.decode('utf8').split()
+                
+                if len(values) >= 3 and values != ['Discovery:','Python']:    # this should catch CM/MCM/ACM/S/T/U-NESIEs
+                    found = TYPES.get(values[2], None)
+                    
+                    if found is not None:
+                        values.insert(2, found)
+                        device = dict(zip(KEYS, values))
+                        device['mac'] = ':'.join(device['mac'].lower().split('-'))
+                        results[address[0]] = device
+    except socket.timeout as e:
+        print(e)
+        pass
+
+    return results
+
+def gui_data_import(*eth_filter):
+
+    headings = ['IP Address','Name','Mac Address','Type', 'ID','Group']
+    eth_list = unit_search()
+    gui_eth_df = pd.DataFrame.from_dict(eth_list, orient='index')
+    gui_eth_df_filt = gui_eth_df.sort_values('name')
+
+    if eth_filter[0] != '':
+        gui_eth_df_filt = gui_eth_df.loc[gui_eth_df['ID'] == eth_filter[0]]
+
+    gui_eth_df_filt = gui_eth_df_filt.rename_axis('ip_adress').reset_index()
+    gui_eth_list = gui_eth_df_filt.values.tolist()
+
+    return gui_eth_df_filt
 
 def read_json_file():
    relative_path = "../system/state.json"
@@ -63,6 +114,8 @@ def main():
    wifi_form_channel = WifiChannelForm()
    wifi_input_ip = None
    wifi_form_ip = WifiStaticIp()
+
+   gui_eth_df_filt = gui_data_import('B')
    
    if wifi_form_channel.validate_on_submit():
       wifi_input_channel = wifi_form_channel.wifi_input_channel.data
@@ -78,7 +131,8 @@ def main():
                         wifi_form_channel=wifi_form_channel,
                         wifi_input_channel=wifi_input_channel,
                         wifi_form_ip=wifi_form_ip,
-                        wifi_input_ip=wifi_input_ip)
+                        wifi_input_ip=wifi_input_ip,
+                        tables=[gui_eth_df_filt.to_html(classes='data', header="true")])
 
 #background process happening without any refreshing
 @app.route('/background_process_test')
@@ -161,7 +215,13 @@ def bp_powerRestart():
 def bp_powerOff():
    os.system("sudo shutdown -h now")
 
+#background process happening without any refreshing
+# @app.route('/admin', methods=["POST", "GET"])
+# def bp_ethDiscover():
+#    gui_eth_df_filt = gui_data_import('B')
+#    return render_template('admin.html',  tables=[gui_eth_df_filt.to_html(classes='data', header="true")])
+
 
 if __name__ == "__main__":
 
-   app.run(host='172.16.136.87', port=8080, debug=True)
+   app.run(host='192.168.168.199', port=8080, debug=True)

@@ -227,6 +227,12 @@
       </form>
 </div>
 
+<div class="card">
+{% for table in tables %}
+            {{ table|safe }}
+{% endfor %}
+</div>
+
 {% include 'footer.html' %}
 
 <!-- Popper.js, then Bootstrap JS -->

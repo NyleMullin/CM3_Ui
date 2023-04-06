@@ -287,6 +287,17 @@ weak/medium/strong classes */
     margin: 20px;
 }
 
+/* Table stying */
+table.dataframe, .dataframe th, .dataframe td {
+    border: none;
+    border-bottom: 1px solid #C8C8C8;
+    border-collapse: collapse;
+    text-align:left;
+    padding: 10px;
+    margin-bottom: 40px;
+    font-size: 0.9em;
+}
+
 /* Mobile display */
 @media screen and (max-width: 800px) {
     /* Home Json data cards*/
