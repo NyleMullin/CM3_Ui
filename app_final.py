@@ -30,6 +30,7 @@ app = Flask(__name__)
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config['WTF_CSRF_ENABLED'] = False
+app.config['WTF_CSRF_METHODS'] = []
 
 # Create a class form for WiFi channel
 class WifiChannelForm(FlaskForm):
