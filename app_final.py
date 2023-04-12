@@ -7,6 +7,7 @@ import sys
 sys.path.append('/home/cm3/system/') # reletive path todo
 import globalvars
 import powerbutton
+import clear_oled
 import signal
 import subprocess
 import math
@@ -14,6 +15,7 @@ import copy
 from board import SCL, SDA
 import busio
 from PIL import Image, ImageDraw, ImageFont
+sys.path.append('/home/cm3/Adafruit_CircuitPython_SSD1306/')
 import adafruit_ssd1306
 import json
 import os
@@ -25,6 +27,8 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 app = Flask(__name__)
+# SECRET_KEY = os.urandom(32)
+# app.config['SECRET_KEY'] = SECRET_KEY
 
 # Create a class form for WiFi channel
 class WifiChannelForm(FlaskForm):
@@ -256,6 +260,8 @@ def updateJson(lock):
 def run_oled(lock):
    powerbutton.init()
 
+   clear_oled.init()
+
    # Create the I2C interface.
    i2c = busio.I2C(SCL, SDA)
 
@@ -413,6 +419,88 @@ def background_process():
    return jsonfile
    # return "<p>Hello</p>!"
 
+#background process happening without any refreshing
+@app.route('/wifiMode')
+def bp_wifiMode():
+   # Switch channel from 11 - 36 or vice verse
+   hostapd_path = "/etc/hostapd/hostapd.conf"
+   with open(hostapd_path, 'r+') as default_conf:
+      for line in default_conf:
+         if line.lstrip().startswith('channel='):
+            channel = line
+            channel = line.rsplit('=', 1)[1]
+         if line.lstrip().startswith('hw_mode='):
+            hw_mode = line
+   with open(hostapd_path, 'r+') as default_conf:
+      for line in default_conf:
+         if line.lstrip().startswith('channel='):
+            channel = line.rsplit('=', 1)[1]
+            print(channel, "found wifi channel")
+            if channel <= "14":
+               print("WiFi is in 2.4 ghz mode changing to 5ghz")
+               with fileinput.input(hostapd_path, inplace=True) as default_conf:
+                  for linefile in default_conf:
+                     op_line = linefile.replace(channel, '36\n')
+                     print(op_line, end='')
+            if channel >= "14":
+               print("Wifi is in 5ghz mode changing to 2.4ghz")
+               with fileinput.input(hostapd_path, inplace=True) as default_conf:
+                  for linefile in default_conf:
+                     op_line = linefile.replace(channel, '11\n')
+                     print(op_line, end='')
+         elif line.lstrip().startswith('hw_mode='):
+            hw_mode = line
+            hw_mode = hw_mode.rstrip()
+            print("wifi is currently in hardware mode: ", len(hw_mode))
+            if hw_mode == "hw_mode=g" and channel <= "14":
+               print("Channel is in 2.4ghz changin to 5ghz")
+               with fileinput.input(hostapd_path, inplace=True) as default_conf:
+                  for linefile in default_conf:
+                     op_line = linefile.replace(hw_mode, 'hw_mode=a')
+                     print(op_line, end='')
+            if hw_mode == "hw_mode=a" and channel >= "14":
+               print("Channel is in 2.4ghz changin to 5ghz")
+               with fileinput.input(hostapd_path, inplace=True) as default_conf:
+                  for linefile in default_conf:
+                     op_line = linefile.replace(hw_mode, 'hw_mode=g')
+                     print(op_line, end='')
+   print(line, '1\n')
+
+   subprocess.run(["sudo", "ip", "link", "set", "wlan0", "down"])
+   subprocess.Popen(("/etc/init.d/hostapd", "restart"), shell = False).wait()
+   subprocess.run(["sudo", "ip", "link", "set", "wlan0", "up"])
+   time.sleep(5)
+   return str(line)
+
+#background process happening without any refreshing
+@app.route('/wifiDhcp')
+def bp_wifiDhcp():
+   return "<p>Toggle enabling the dhcp</p>"
+
+#background process happening without any refreshing
+@app.route('/wifiRestart')
+def bp_wifiRestart():
+   subprocess.run(["sudo", "ip", "link", "set", "wlan0", "down"])
+   subprocess.Popen(("/etc/init.d/hostapd", "restart"), shell = False).wait()
+   subprocess.run(["sudo", "ip", "link", "set", "wlan0", "up"])
+   time.sleep(5)
+
+#background process happening without any refreshing
+@app.route('/powerRestart')
+def bp_powerRestart():
+   os.system("sudo reboot")
+
+#background process happening without any refreshing
+@app.route('/powerOff')
+def bp_powerOff():
+   os.system("sudo shutdown -h now")
+
+#background process happening without any refreshing
+# @app.route('/admin', methods=["POST", "GET"])
+# def bp_ethDiscover():
+#    gui_eth_df_filt = gui_data_import('B')
+#    return render_template('admin.html',  tables=[gui_eth_df_filt.to_html(classes='data', header="true")])
+
 
 if __name__ == "__main__":
 
@@ -426,7 +514,7 @@ if __name__ == "__main__":
    t1.start()
    t2.start()
 
-   app.run(host='192.168.168.199', port=8080, debug=False)
+   app.run(host='0.0.0.0', port=80, debug=False)
 
    print("flask exit")
    exit_now = True

@@ -223,5 +223,8 @@ def bp_powerOff():
 
 
 if __name__ == "__main__":
+   cmd = "hostname -I | cut -d' ' -f1"
+   IP = subprocess.check_output(cmd, shell=True).decode("utf-8")
+   IP = IP.rstrip('\n')
 
-   app.run(host='192.168.168.199', port=8080, debug=True)
+   app.run(host=IP, port=8080, debug=True)
