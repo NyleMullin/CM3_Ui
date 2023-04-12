@@ -27,8 +27,9 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 app = Flask(__name__)
-# SECRET_KEY = os.urandom(32)
-# app.config['SECRET_KEY'] = SECRET_KEY
+SECRET_KEY = os.urandom(32)
+app.config['SECRET_KEY'] = SECRET_KEY
+app.config['WTF_CSRF_ENABLED'] = False
 
 # Create a class form for WiFi channel
 class WifiChannelForm(FlaskForm):
