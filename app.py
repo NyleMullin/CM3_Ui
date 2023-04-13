@@ -13,7 +13,10 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "root"
+SECRET_KEY = os.urandom(32)
+app.config['SECRET_KEY'] = SECRET_KEY
+app.config['WTF_CSRF_ENABLED'] = False
+app.config['WTF_CSRF_METHODS'] = []
 
 # Create a class form for WiFi channel
 class WifiChannelForm(FlaskForm):
@@ -73,6 +76,10 @@ def gui_data_import(*eth_filter):
     headings = ['IP Address','Name','Mac Address','Type', 'ID','Group']
     eth_list = unit_search()
     gui_eth_df = pd.DataFrame.from_dict(eth_list, orient='index')
+    if gui_eth_df.empty:
+      data = [['NO DEVICES FOUND', 400]]
+      gui_eth_df_filt = pd.DataFrame(data, columns=['MESSAGE', 'CODE'])
+      return gui_eth_df_filt
     gui_eth_df_filt = gui_eth_df.sort_values('name')
 
     if eth_filter[0] != '':
@@ -115,7 +122,10 @@ def main():
    wifi_input_ip = None
    wifi_form_ip = WifiStaticIp()
 
-   gui_eth_df_filt = gui_data_import('B')
+   try:
+      gui_eth_df_filt = gui_data_import('B')
+   except Exception as e:
+      print(e)
    
    if wifi_form_channel.validate_on_submit():
       wifi_input_channel = wifi_form_channel.wifi_input_channel.data
